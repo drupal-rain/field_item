@@ -1,0 +1,49 @@
+<?php
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function field_item_ctools_plugin_directory($owner, $plugin_type) {
+  $owners = array('ctools');
+  if (in_array($owner, $owners)) {
+    return 'plugins/' . $plugin_type;
+  }
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function field_item_form_field_ui_field_edit_form_alter(&$form, &$form_state, $form_id) {
+  $form['instance']['field_item']['on'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Export field item as ctools content'),
+    '#default_value' => isset($form['#instance']['field_item']['on']) ? $form['#instance']['field_item']['on'] : FALSE,
+    '#weight' => 100,
+  );
+}
+
+/**
+ * Get field instances that activate the ctools content_type feature.
+ */
+function field_item_get_active_instances() {
+  $instances = &drupal_static(__FUNCTION__);
+  if (isset($instances)) {
+    return $instances;
+  }
+
+  $instances = array();
+  $fields_info = field_info_fields();
+  foreach ($fields_info as $field => $field_info) {
+    foreach ($field_info['bundles'] as $entity_type => $bundles) {
+      foreach ($bundles as $bundle) {
+        $instance_info = field_info_instance($entity_type, $field, $bundle);
+        // Field instance that turned on field_item feature.
+        if (isset($instance_info['field_item']) && $instance_info['field_item']['on']) {
+          $instances[$field] = $instance_info;
+        }
+      }
+    }
+  }
+
+  return $instances;
+}
