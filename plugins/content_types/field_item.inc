@@ -13,7 +13,7 @@ function field_item_content_type_content_types($plugin) {
   foreach ($instances as $field_name => $instance) {
     $entity_type = $instance['entity_type'];
     $bundle = $instance['bundle'];
-    $key = 'field_item:' . $field_name;
+    $key = $entity_type . ':' . $field_name;
     $types[$key] = array(
       'title' => $field_name,
       'description' => $field_name,
