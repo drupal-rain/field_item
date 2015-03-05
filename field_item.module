@@ -6,7 +6,7 @@
 function field_item_ctools_plugin_directory($owner, $plugin_type) {
   $owners = array('ctools');
   if (in_array($owner, $owners)) {
-    return 'plugins/' . $plugin_type;
+    return 'plugins/' . $owner . '/' . $plugin_type;
   }
 }
 
@@ -46,4 +46,18 @@ function field_item_get_active_instances() {
   }
 
   return $instances;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function field_item_preprocess_panels_pane(&$vars) {
+  $pane = $vars['pane'];
+  // Add theme_hook_suggestions to field_item panes
+  // Just after 'panels_pane__field_item'
+  if ($pane->type == 'field_item') {
+    list($entity_type, $id, $field_name, $delta) = explode(':', $pane->subtype);
+    $template = 'panels_pane__field_item__' . $entity_type . '_' . $field_name;
+    $vars['theme_hook_suggestions'] = \Drupal\ko\ArrayHelper::insertAfterValue($vars['theme_hook_suggestions'], 'panels_pane__field_item', $template);
+  }
 }

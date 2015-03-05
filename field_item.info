@@ -1,4 +1,7 @@
 name = Field item
 description = Attach a single field item to the panels.
 core = 7.x
+
+dependencies[] = ko
+
 version = 7.x-1.x
